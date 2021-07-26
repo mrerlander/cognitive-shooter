@@ -1,0 +1,55 @@
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  
+  body {
+    padding-bottom: 5rem;
+    padding-top: 5rem;
+  }
+  
+  #instructions {
+    padding-top: 5rem;
+  }
+  
+  #debrief {
+    padding-top: 5rem;
+  }
+  
+  .form-check {
+    margin-bottom: 2rem;
+  }
+  
+  .btn-outline-dark.focus,
+  .btn-outline-dark:focus {
+    box-shadow: none;
+  }
+  
+  .btn-outline-dark:hover {
+    color: #343a40;
+    background-color: transparent;
+  }
+  
+  .radio-card {
+    width: 100px;
+    height: 152.859px;
+  }
+  
+  [type=radio].btn-check { 
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  input[type=radio]:checked + label>img {
+    border: 1px solid #fff;
+    box-shadow: 0 0 3px 3px blue;
+  }
+  
+  .visible {
+    display: block;
+  }
+  .invisible {
+    display: none;
+  }
