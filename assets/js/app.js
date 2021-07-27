@@ -561,7 +561,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "That combination already exists. Please select a different assortment of cards."
       );
     } else {
-      let userRef = database.ref(trainingString + "/" + id + "/" + testString);
+      let userRef = database.ref(trainingString + "/" + id + "/" + testTypeString);
       writeUserData(userRef);
     }
   }
@@ -937,6 +937,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function complete() {
     document.documentElement.style.cursor = "auto";
     studyDiv.classList.add("invisible");
+    const whichTestType = storage.getItem("testType");
     const whichTest = storage.getItem("test");
     const whichTraining = storage.getItem("control");
     if (whichTest == "two") {
@@ -957,7 +958,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       trainingString = "training";
     }
-    if (testType == "low") {
+    if (whichTestType == "low") {
       testTypeString = "low";
     } else {
       testTypeString = "high";
