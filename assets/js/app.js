@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const trialDiv = document.getElementById("trial-div");
   const scoreDiv = document.getElementById("score-div");
   const shotTextDiv = document.getElementById("shot");
+  const audioHighTextDiv = document.getElementById("audio-high");
+  const audioLowTextDiv = document.getElementById("audio-low");
   const shotPointsDiv = document.getElementById("points");
   const shotTotalDiv = document.getElementById("total");
   const realStartDiv = document.getElementById("practice-complete");
@@ -14,34 +16,29 @@ document.addEventListener("DOMContentLoaded", function () {
   const practiceTwo = document.getElementById("complete-two");
   const studyDiv = document.getElementById("study-div");
   const formDiv = document.getElementById("form-div");
-  const form = document.getElementById("form");
-  const cardAppendDiv = document.getElementById("card-append");
-  const beforeForm = document.getElementById("before-form");
-  const afterForm = document.getElementById("after-form");
-  const afterFormText = document.getElementById("after-form-text");
   const instructionsOne = document.getElementById("instructions-one");
   const instructionsTwo = document.getElementById("instructions-two");
   const instructionsThree = document.getElementById("instructions-three");
   const instructionsFour = document.getElementById("instructions-four");
+  const instructionsFive = document.getElementById("instructions-five");
+  const instructionsSix = document.getElementById("instructions-six");
   const timerDiv = document.getElementById("countdown-timer");
-  const rememberDiv = document.getElementById("remember");
-  const rememberSubmit = document.getElementById("remember-submit");
-  const secondCompleteDiv = document.getElementById("second-complete");
-  const secondStudy = document.getElementById("second-study");
   const audioDiv = document.getElementById("audio-div");
   const highInstructions = document.getElementById("high-load");
+  const lowInstructions = document.getElementById("low-load");
+  let secondPracticeDiv = document.getElementById("second-practice");
+  let secondHighInstructions = document.getElementById("high-load-2");
+  let secondLowInstructions = document.getElementById("low-load-2");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const test = urlParams.get("test");
   const training = urlParams.get("control");
   const storage = window.localStorage;
-  let testType = urlParams.get("testType");
   let surveyURL =
-    "https://csunsbs.qualtrics.com/jfe/form/SV_cSEQTYWt6Ykh5Ii?id=";
+    "https://csunsbs.qualtrics.com/jfe/form/SV_80pS9v72sJiWWHk?id=";
   let allDone = false;
   let trialResults = [];
   let testString;
-  let trainingString;
   let testTypeString;
   let gun;
   let shotText;
@@ -64,18 +61,15 @@ document.addEventListener("DOMContentLoaded", function () {
   let realTrial = false;
   let practice = true;
   let fired = true;
-  let lowCard;
-  let midCard;
-  let highCard;
-  let faceCard;
-  let cardBack;
-  let cardArr = [];
   let id;
   let audioFile;
   let currentAudio;
   let previousAudio = -1;
   let audioKey = false;
   let startPractice = true;
+  let highComplete = false;
+  let lowComplete = false;
+  let secondPractice = false;
 
   let one = [];
   const oneAudio = "./assets/audio/one.wav";
@@ -401,17 +395,17 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   if (checkBox) {
-    if (testType == null) {
       let randomTest = Math.round(Math.random());
+      let randType;
       if (randomTest == 0) {
-        testType = "low";
+        randType = "low";
       } else {
-        testType = "high";
+        randType = "high";
       }
-    }
-    storage.setItem("testType", testType);
+    storage.setItem("testType", randType);
     storage.setItem("test", test);
     storage.setItem("control", training);
+  
     checkBox.onchange = function () {
       if (this.checked) {
         nextBtn.disabled = false;
@@ -420,6 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
   }
+  
 
   if (nextBtn) {
     nextBtn.addEventListener("click", function (e) {
@@ -429,41 +424,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (rememberSubmit) {
-    rememberSubmit.addEventListener("click", function (e) {
-      e.preventDefault();
-      let pw = document.getElementsByName("card-combo");
-      for (i = 0; i < pw.length; i++) {
-        if (pw[i].checked && pw[i].value == "yes") {
-          rememberDiv.classList.add("invisible");
-          formDiv.classList.remove("invisible");
-          break;
-        } else if (pw[i].checked && pw[i].value == "no") {
-          form.classList.add("invisible");
-          beforeForm.classList.add("invisible");
-          rememberDiv.classList.add("invisible");
-          afterForm.classList.add("invisible");
-          id = Date.now();
-          let userRef = database.ref(
-            trainingString + "/" + id + "/" + testTypeString
-          );
-          writeUserData(userRef);
-          break;
-        }
-      }
-    });
-  }
-
   if (instructionsBtn) {
-    if (storage.getItem("test") == "two") {
-      secondStudy.classList.remove("invisible");
-      instructionsCounter--;
-    } else {
-      instructionsOne.classList.remove("invisible");
-    }
-
     if (storage.getItem("testType") == "high") {
       highInstructions.style.display = "block";
+    } else {
+      lowInstructions.style.display = "block";
     }
 
     // document.addEventListener("keydown", function (e) {
@@ -490,53 +455,20 @@ document.addEventListener("DOMContentLoaded", function () {
           instructionsThree.classList.remove("invisible");
           break;
         case 3:
+          instructionsThree.classList.add("invisible");
+          instructionsFour.classList.remove("invisible");
+          break;
+        case 4:
+          instructionsFour.classList.add("invisible");
+          instructionsFive.classList.remove("invisible");
+          break;
+        case 5:
           window.location.href = "study.html";
           break;
         default:
           break;
       }
     });
-  }
-
-  if (form) {
-    form.onsubmit = submit;
-    function submit(e) {
-      e.preventDefault();
-      cardArr = [];
-      let lowCards = document.getElementsByName("lowcardradio");
-      let midCards = document.getElementsByName("midcardradio");
-      let highCards = document.getElementsByName("highcardradio");
-      let faceCards = document.getElementsByName("facecardradio");
-      let cardBacks = document.getElementsByName("cardbackradio");
-      lowCard = getChecked(lowCards);
-      midCard = getChecked(midCards);
-      highCard = getChecked(highCards);
-      faceCard = getChecked(faceCards);
-      cardBack = getChecked(cardBacks);
-
-      id = lowCard + midCard + highCard + faceCard + cardBack;
-
-      if (testString == "firstStudy") {
-        checkForFirstTime(id);
-      } else {
-        let userRef = database.ref(
-          trainingString + "/" + id + "/" + testTypeString
-        );
-        writeUserData(userRef);
-      }
-    }
-  }
-
-  function getChecked(cardArray) {
-    for (let i = 0; i < cardArray.length; i++) {
-      if (cardArray[i].checked) {
-        cardImage = new Image();
-        cardImage.classList.add("radio-card");
-        cardImage.src = cardArray[i].nextElementSibling.firstChild.src;
-        cardArr.push(cardImage);
-        return cardArray[i].value;
-      }
-    }
   }
 
   let firebaseConfig = {
@@ -547,49 +479,19 @@ document.addEventListener("DOMContentLoaded", function () {
     storageBucket: "shooter-cog.appspot.com",
     messagingSenderId: "311137323923",
     appId: "1:311137323923:web:9e80f6ee30cc92e477b666",
-    measurementId: "G-X9Z4W7TPSR"
+    measurementId: "G-X9Z4W7TPSR",
   };
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  let database = firebase.initializeApp(firebaseConfig);
   firebase.analytics();
-  let database = firebase.database();
+  let today = new Date();
+  let todayString = today.toDateString();
+  let dbRef = database.database().ref(todayString);
+  let userRef = dbRef.push();
+  id = userRef.key;
 
-  function userFirstTimeCallback(exists) {
-    if (exists) {
-      form.reset();
-      alert(
-        "That combination already exists. Please select a different assortment of cards."
-      );
-    } else {
-      let userRef = database.ref(trainingString + "/" + id + "/" + testTypeString);
-      writeUserData(userRef);
-    }
-  }
-
-  function checkForFirstTime(userId) {
-    let ref = database.ref(trainingString);
-    let exists;
-    ref
-      .child(userId)
-      .once("value", function (snapshot) {
-        exists = snapshot.val() !== null;
-      })
-      .then(function () {
-        userFirstTimeCallback(exists);
-      });
-  }
-
-  function writeUserData(userRef) {
+  function writeUserData() {
     userRef.set(trialResults).then(function () {
-      form.classList.add("invisible");
-      beforeForm.classList.add("invisible");
-      if (testString != "secondStudy") {
-        afterForm.classList.remove("invisible");
-        for (i = 0; i < cardArr.length; i++) {
-          cardAppendDiv.appendChild(cardArr[i]);
-        }
-      }
-      secondCompleteDiv.classList.remove("invisible");
       formDiv.classList.remove("invisible");
       allDone = true;
     });
@@ -620,11 +522,19 @@ document.addEventListener("DOMContentLoaded", function () {
       audioResult();
     }
 
-    if (startPractice) {
+    if (startPractice && e.key == " ") {
       startPractice = false;
-      instructionsFour.classList.add("invisible");
+      instructionsSix.classList.add("invisible");
       studyDiv.classList.remove("invisible");
       start();
+    }
+
+    if (secondPractice && e.key == " ") {
+      secondPractice = false;
+      secondPracticeDiv.classList.add("invisible");
+      studyDiv.classList.remove("invisible");
+      timerDiv.classList.remove("invisible");
+      secondStart();
     }
 
     if (!practice && e.key == " " && practiceCount < 2) {
@@ -639,9 +549,10 @@ document.addEventListener("DOMContentLoaded", function () {
         start();
       }
     }
+
     if (allDone && e.key == " ") {
       storage.clear();
-      window.location.href = surveyURL + id + "&testType=" + testTypeString;
+      window.location.href = surveyURL + id;
     }
   });
 
@@ -700,6 +611,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let todayDateString = today.toLocaleDateString();
       let todayTimeString = today.toLocaleTimeString();
       let todayString = todayDateString + " " + todayTimeString;
+      testTypeString = storage.getItem("testType");
       thisTrial = new Trial();
       thisTrial.image = shooterBackground.substring(21);
       thisTrial.shotText = shotText;
@@ -707,6 +619,7 @@ document.addEventListener("DOMContentLoaded", function () {
       thisTrial.totalPoints = total;
       thisTrial.trialNumber = count;
       thisTrial.date = todayString;
+      thisTrial.load = testTypeString;
       trialResults.push(thisTrial);
     }
 
@@ -716,7 +629,7 @@ document.addEventListener("DOMContentLoaded", function () {
     trialDiv.classList.add("invisible");
     scoreDiv.classList.remove("invisible");
 
-    if (storage.getItem("testType") == "high" && count > 1) {
+    if ((storage.getItem("testType") == "high" && count > 1) || storage.getItem("testType") == "low") {
       setTimeout(audioCue, 3000);
     } else {
       setTimeout(whichTrial, 3000);
@@ -727,6 +640,11 @@ document.addEventListener("DOMContentLoaded", function () {
     key = null;
     audioKey = true;
     scoreDiv.classList.add("invisible");
+    if (storage.getItem("testType") == "high"){
+      audioHighTextDiv.classList.remove("invisible");
+    } else {
+      audioLowTextDiv.classList.remove("invisible");
+    }
     audioDiv.classList.remove("invisible");
   }
 
@@ -738,11 +656,15 @@ document.addEventListener("DOMContentLoaded", function () {
         trialResults[trialResults.length - 1].audioInput = "higher";
       }
 
+      if (storage.getItem("testType") == "high"){
       trialResults[trialResults.length - 1].currentAudio = currentAudio;
       trialResults[trialResults.length - 1].previousAudio = previousAudio;
+      } else {
+      trialResults[trialResults.length - 1].currentAudio = currentAudio;
+      }
       console.log(trialResults[trialResults.length - 1]);
     }
-    
+
     previousAudio = currentAudio;
     whichTrial();
   }
@@ -805,7 +727,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     scoreDiv.classList.add("invisible");
     audioDiv.classList.add("invisible");
-    if (count < 16) {
+    audioHighTextDiv.classList.add("invisible");
+    audioLowTextDiv.classList.add("invisible");
+    if (count < 4) {
       //16
       if (bgCounter == 0) {
         numBackgrounds = Math.floor(Math.random() * 4) + 1;
@@ -844,9 +768,11 @@ document.addEventListener("DOMContentLoaded", function () {
     timerDiv.classList.add("invisible");
     scoreDiv.classList.add("invisible");
     audioDiv.classList.add("invisible");
-    if (count < 100) {
-      //100
-      
+    audioHighTextDiv.classList.add("invisible");
+    audioLowTextDiv.classList.add("invisible");
+    if (count < 5) {
+      //50
+
       if (bgCounter == 0) {
         numBackgrounds = Math.floor(Math.random() * 4) + 1;
         setRandomTimes(numBackgrounds);
@@ -870,9 +796,36 @@ document.addEventListener("DOMContentLoaded", function () {
       bgCounter < numBackgrounds
         ? setTimeout(showBackground, randomTimes[bgCounter], true)
         : setTimeout(showShooterBackground, randomTimes[bgCounter], true);
-    } else {
+    } else if ((highComplete == true || lowComplete == true) && count == 5){
+      //count == 50
       complete();
+    } else {
+      secondPracticeFunc();
     }
+  }
+
+  function secondPracticeFunc() {
+    secondPractice = true;
+    secondPracticeDiv.classList.remove("invisible");
+
+    if(storage.getItem("testType") == "high"){
+      highComplete = true;
+      secondLowInstructions.style.display = "block";
+      storage.setItem("testType", "low");
+    } else {
+      lowComplete = true;
+      secondHighInstructions.style.display = "block";
+      storage.setItem("testType", "high");
+    }
+
+  }
+
+  function secondStart(){
+    total = 0;
+    count = 0;
+    realTrial = false;
+    countdownTimer = 6;
+    countdownInterval = setInterval(timer, 1000);
   }
 
   function realStart() {
@@ -881,6 +834,10 @@ document.addEventListener("DOMContentLoaded", function () {
     realTrial = true;
     realStartDiv.classList.remove("invisible");
     practice = false;
+    if (highComplete == true || lowComplete == true){
+      practiceCount = 0;
+      practiceOne.classList.remove("invisible");
+    }
   }
 
   let countdownTimer;
@@ -935,24 +892,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function complete() {
-    document.documentElement.style.cursor = "auto";
     studyDiv.classList.add("invisible");
     const whichTestType = storage.getItem("testType");
-    const whichTest = storage.getItem("test");
     const whichTraining = storage.getItem("control");
-    if (whichTest == "two") {
-      rememberDiv.classList.remove("invisible");
-      testString = "secondStudy";
-    } else {
-      if (whichTraining == "control") {
-        beforeForm.textContent =
-          "We only need a couple more things from you. First, we need to be able to match up your data from this session to your second session. To maintain your anonymity, we will show you a series of images and we'd like you to select the image you like best. Please remember your responses or write them down somewhere safe. You'll be shown these same images in your second session.";
-        afterFormText.textContent =
-          "Here are your choices. Please write them down or take a picture with your cell phone so we can match your score here with the one we collect after your second session.";
-      }
       formDiv.classList.remove("invisible");
       testString = "firstStudy";
-    }
+
     if (whichTraining == "control") {
       trainingString = "control";
     } else {
@@ -963,5 +908,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       testTypeString = "high";
     }
+
+    writeUserData();
+
   }
 });
