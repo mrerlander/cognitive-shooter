@@ -729,7 +729,7 @@ document.addEventListener("DOMContentLoaded", function () {
     audioDiv.classList.add("invisible");
     audioHighTextDiv.classList.add("invisible");
     audioLowTextDiv.classList.add("invisible");
-    if (count < 4) {
+    if (count < 16) {
       //16
       if (bgCounter == 0) {
         numBackgrounds = Math.floor(Math.random() * 4) + 1;
@@ -770,7 +770,7 @@ document.addEventListener("DOMContentLoaded", function () {
     audioDiv.classList.add("invisible");
     audioHighTextDiv.classList.add("invisible");
     audioLowTextDiv.classList.add("invisible");
-    if (count < 5) {
+    if (count < 50) {
       //50
 
       if (bgCounter == 0) {
@@ -796,7 +796,7 @@ document.addEventListener("DOMContentLoaded", function () {
       bgCounter < numBackgrounds
         ? setTimeout(showBackground, randomTimes[bgCounter], true)
         : setTimeout(showShooterBackground, randomTimes[bgCounter], true);
-    } else if ((highComplete == true || lowComplete == true) && count == 5){
+    } else if ((highComplete == true || lowComplete == true) && count == 50){
       //count == 50
       complete();
     } else {
