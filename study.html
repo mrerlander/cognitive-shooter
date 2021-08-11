@@ -21,7 +21,7 @@
     <main class="flex-shrink-0">
       <div class="container">
         <div
-          id="instructions-six"
+          id="instructions-seven"
           class="row justify-content-center align-items-center"
         >
           <div class="col-12 text-center font-weight-bold">
@@ -38,19 +38,28 @@
         >
           <div class="col-12 text-center font-weight-bold">
             <p>You have completed half of the study.</p>
-            <p id="low-load-2" style="display: none">
-              For the second half of the study, you will continue to make
-              shoot/don't shoot decisions as before. However, on this next set
-              of trials, you will be asked to indicate if the number you heard
-              is higher or lower than the number 5.
-            </p>
-            <p id="high-load-2" style="display: none">
-              For the second half of the study, you will continue to make
-              shoot/don't shoot decisions as before. However, on this next set
-              of trials, you will be asked to indicate if the number you heard
-              is higher or lower than the number you heard on the previous
-              trial.
-            </p>
+            <div id="low-load-2" style="display: none">
+              <p>
+                For the second half of the study, you will continue to make
+                shoot/don't shoot decisions as before.
+              </p>
+              <p>
+                However, on this next set of trials, you will be asked to
+                indicate if the number you heard is numerically higher or lower
+                than the number 5.
+              </p>
+            </div>
+            <div id="high-load-2" style="display: none">
+              <p>
+                For the second half of the study, you will continue to make
+                shoot/don't shoot decisions as before.
+              </p>
+              <p>
+                However, on this next set of trials, you will be asked to
+                indicate if the number you heard is numerically higher or lower
+                than the number you heard on the previous trial.
+              </p>
+            </div>
             <br />
             <p class="text-center">
               <b class="font-weight-bold" style="display: block"
@@ -82,19 +91,19 @@
           <div id="audio-div" class="invisible">
             <div class="col-12 text-center font-weight-bold align-self-end">
               <h3 id="audio-high" class="invisible">
-                Was the audio number higher or lower than the previous audio
-                number?
+                Was the audio number numerically higher or lower than the
+                previous audio number?
               </h3>
               <h3 id="audio-low" class="invisible">
-                Was the audio number higher or lower than 5?
+                Was the audio number numerically higher or lower than 5?
               </h3>
               <br />
               <br />
               <p class="text-center">
-                LOWER: press the “s” key on your keyboard.
+                LOWER: press the “b” key on your keyboard.
               </p>
               <p class="text-center">
-                HIGHER: press the "f" key on your keyboard.
+                HIGHER: press the "t" key on your keyboard.
               </p>
             </div>
           </div>
@@ -104,14 +113,17 @@
               class="col-12 text-center font-weight-bold align-self-end"
             >
               <p>
-                You have now completed the practice trials and are ready to move
-                on to the test phase of the experiment.
+                You have now completed the practice trials and will be moving to
+                the test phase.
               </p>
 
               <p>
-                Again, please make sure to respond as quickly and as accurately
-                as possible.
+                Don't forget to rest your index fingers on the F &#40;don't
+                shoot&#41; and J &#40;shoot&#41; keys so that we can capture an
+                accurate reaction time for each trial.
               </p>
+
+              <p>As a reminder, T is for higher and B is for lower.</p>
 
               <p>
                 Completing the dual tasks may be challenging. Please do not give
@@ -132,9 +144,9 @@
             >
               <p>Remember:</p>
 
-              <p>If the target is ARMED press the "l" key on your keyboard.</p>
+              <p>If the target is ARMED press the "j" key on your keyboard.</p>
               <p>
-                If the target is UNARMED press the "j" key on your keyboard.
+                If the target is UNARMED press the "f" key on your keyboard.
               </p>
 
               <p>Press the space bar to begin the test trials</p>

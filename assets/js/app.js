@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const instructionsFour = document.getElementById("instructions-four");
   const instructionsFive = document.getElementById("instructions-five");
   const instructionsSix = document.getElementById("instructions-six");
+  const instructionsSeven = document.getElementById("instructions-seven");
   const timerDiv = document.getElementById("countdown-timer");
   const audioDiv = document.getElementById("audio-div");
   const highInstructions = document.getElementById("high-load");
@@ -395,17 +396,17 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   if (checkBox) {
-      let randomTest = Math.round(Math.random());
-      let randType;
-      if (randomTest == 0) {
-        randType = "low";
-      } else {
-        randType = "high";
-      }
+    let randomTest = Math.round(Math.random());
+    let randType;
+    if (randomTest == 0) {
+      randType = "low";
+    } else {
+      randType = "high";
+    }
     storage.setItem("testType", randType);
     storage.setItem("test", test);
     storage.setItem("control", training);
-  
+
     checkBox.onchange = function () {
       if (this.checked) {
         nextBtn.disabled = false;
@@ -414,7 +415,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
   }
-  
 
   if (nextBtn) {
     nextBtn.addEventListener("click", function (e) {
@@ -463,6 +463,10 @@ document.addEventListener("DOMContentLoaded", function () {
           instructionsFive.classList.remove("invisible");
           break;
         case 5:
+          instructionsFive.classList.add("invisible");
+          instructionsSix.classList.remove("invisible");
+          break;
+        case 6:
           window.location.href = "study.html";
           break;
         default:
@@ -498,13 +502,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   let practiceCount = 0;
+  let reactionTime;
 
   document.addEventListener("keyup", function (e) {
     e.preventDefault();
+    clickTime = Date.now();
+    reactionTime = clickTime - startTime;
 
     if (
       !fired &&
-      (e.key == "l" || e.key == "L" || e.key == "j" || e.key == "J")
+      (e.key == "f" || e.key == "F" || e.key == "j" || e.key == "J")
     ) {
       clearTimeout(shooterTimer);
       fired = true;
@@ -515,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (
       audioKey &&
-      (e.key == "s" || e.key == "S" || e.key == "f" || e.key == "F")
+      (e.key == "t" || e.key == "T" || e.key == "b" || e.key == "B")
     ) {
       audioKey = false;
       key = e.key;
@@ -524,7 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (startPractice && e.key == " ") {
       startPractice = false;
-      instructionsSix.classList.add("invisible");
+      instructionsSeven.classList.add("invisible");
       studyDiv.classList.remove("invisible");
       start();
     }
@@ -563,6 +570,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!fired) {
       fired = true;
+      reactionTime = -1;
     }
 
     if (real) {
@@ -573,8 +581,8 @@ document.addEventListener("DOMContentLoaded", function () {
       whichTrial = practiceTrial;
     }
     switch (key) {
-      case "L":
-      case "l":
+      case "J":
+      case "j":
         if (gun) {
           shotText = "Good shot!";
           shotPoints = goodShot;
@@ -586,8 +594,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         break;
 
-      case "J":
-      case "j":
+      case "F":
+      case "f":
         if (gun) {
           shotText = "You've been shot!";
           shotPoints = badNoShot;
@@ -620,6 +628,7 @@ document.addEventListener("DOMContentLoaded", function () {
       thisTrial.trialNumber = count;
       thisTrial.date = todayString;
       thisTrial.load = testTypeString;
+      thisTrial.reactionTime = reactionTime;
       trialResults.push(thisTrial);
     }
 
@@ -629,7 +638,10 @@ document.addEventListener("DOMContentLoaded", function () {
     trialDiv.classList.add("invisible");
     scoreDiv.classList.remove("invisible");
 
-    if ((storage.getItem("testType") == "high" && count > 1) || storage.getItem("testType") == "low") {
+    if (
+      (storage.getItem("testType") == "high" && count > 1) ||
+      storage.getItem("testType") == "low"
+    ) {
       setTimeout(audioCue, 3000);
     } else {
       setTimeout(whichTrial, 3000);
@@ -640,7 +652,7 @@ document.addEventListener("DOMContentLoaded", function () {
     key = null;
     audioKey = true;
     scoreDiv.classList.add("invisible");
-    if (storage.getItem("testType") == "high"){
+    if (storage.getItem("testType") == "high") {
       audioHighTextDiv.classList.remove("invisible");
     } else {
       audioLowTextDiv.classList.remove("invisible");
@@ -650,17 +662,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function audioResult() {
     if (realTrial) {
-      if (key == "s" || key == "S") {
+      if (key == "b" || key == "B") {
         trialResults[trialResults.length - 1].audioInput = "lower";
-      } else if (key == "f" || key == "F") {
+      } else if (key == "t" || key == "T") {
         trialResults[trialResults.length - 1].audioInput = "higher";
       }
 
-      if (storage.getItem("testType") == "high"){
-      trialResults[trialResults.length - 1].currentAudio = currentAudio;
-      trialResults[trialResults.length - 1].previousAudio = previousAudio;
+      if (storage.getItem("testType") == "high") {
+        trialResults[trialResults.length - 1].currentAudio = currentAudio;
+        trialResults[trialResults.length - 1].previousAudio = previousAudio;
       } else {
-      trialResults[trialResults.length - 1].currentAudio = currentAudio;
+        trialResults[trialResults.length - 1].currentAudio = currentAudio;
       }
       console.log(trialResults[trialResults.length - 1]);
     }
@@ -707,9 +719,13 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
+  let startTime;
+  let clickTime;
+
   function showShooterBackground(real) {
     image.src = shooterBackground;
     image.onload = function () {
+      startTime = Date.now();
       fired = false;
       bgCounter = 0;
       shooterTimer = setTimeout(showScore, 700, real);
@@ -729,8 +745,8 @@ document.addEventListener("DOMContentLoaded", function () {
     audioDiv.classList.add("invisible");
     audioHighTextDiv.classList.add("invisible");
     audioLowTextDiv.classList.add("invisible");
-    if (count < 16) {
-      //16
+    if (count < 8) {
+      //8
       if (bgCounter == 0) {
         numBackgrounds = Math.floor(Math.random() * 4) + 1;
         setRandomTimes(numBackgrounds);
@@ -796,7 +812,7 @@ document.addEventListener("DOMContentLoaded", function () {
       bgCounter < numBackgrounds
         ? setTimeout(showBackground, randomTimes[bgCounter], true)
         : setTimeout(showShooterBackground, randomTimes[bgCounter], true);
-    } else if ((highComplete == true || lowComplete == true) && count == 50){
+    } else if ((highComplete == true || lowComplete == true) && count == 50) {
       //count == 50
       complete();
     } else {
@@ -808,7 +824,7 @@ document.addEventListener("DOMContentLoaded", function () {
     secondPractice = true;
     secondPracticeDiv.classList.remove("invisible");
 
-    if(storage.getItem("testType") == "high"){
+    if (storage.getItem("testType") == "high") {
       highComplete = true;
       secondLowInstructions.style.display = "block";
       storage.setItem("testType", "low");
@@ -817,10 +833,9 @@ document.addEventListener("DOMContentLoaded", function () {
       secondHighInstructions.style.display = "block";
       storage.setItem("testType", "high");
     }
-
   }
 
-  function secondStart(){
+  function secondStart() {
     total = 0;
     count = 0;
     realTrial = false;
@@ -834,7 +849,7 @@ document.addEventListener("DOMContentLoaded", function () {
     realTrial = true;
     realStartDiv.classList.remove("invisible");
     practice = false;
-    if (highComplete == true || lowComplete == true){
+    if (highComplete == true || lowComplete == true) {
       practiceCount = 0;
       practiceOne.classList.remove("invisible");
     }
@@ -895,8 +910,8 @@ document.addEventListener("DOMContentLoaded", function () {
     studyDiv.classList.add("invisible");
     const whichTestType = storage.getItem("testType");
     const whichTraining = storage.getItem("control");
-      formDiv.classList.remove("invisible");
-      testString = "firstStudy";
+    formDiv.classList.remove("invisible");
+    testString = "firstStudy";
 
     if (whichTraining == "control") {
       trainingString = "control";
@@ -910,6 +925,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     writeUserData();
-
   }
 });
