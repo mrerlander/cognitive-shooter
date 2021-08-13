@@ -621,6 +621,9 @@ document.addEventListener("DOMContentLoaded", function () {
       let todayString = todayDateString + " " + todayTimeString;
       testTypeString = storage.getItem("testType");
       thisTrial = new Trial();
+      thisTrial.audioInput = "N/A";
+      thisTrial.currentAudio = "N/A";
+      thisTrial.previousAudio = "N/A";
       thisTrial.image = shooterBackground.substring(21);
       thisTrial.shotText = shotText;
       thisTrial.points = shotPoints;
