@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const instructionsFive = document.getElementById("instructions-five");
   const instructionsSix = document.getElementById("instructions-six");
   const instructionsSeven = document.getElementById("instructions-seven");
+  const instructionsEight = document.getElementById("instructions-eight");
   const timerDiv = document.getElementById("countdown-timer");
   const audioDiv = document.getElementById("audio-div");
   const highInstructions = document.getElementById("high-load");
@@ -395,6 +396,25 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   ];
 
+  let firebaseConfig = {
+    apiKey: "AIzaSyCqRL94OHiQ8sBYGA_tdCtbMFwTuDODAnI",
+    authDomain: "shooter-cog.firebaseapp.com",
+    databaseURL: "https://shooter-cog-default-rtdb.firebaseio.com",
+    projectId: "shooter-cog",
+    storageBucket: "shooter-cog.appspot.com",
+    messagingSenderId: "311137323923",
+    appId: "1:311137323923:web:9e80f6ee30cc92e477b666",
+    measurementId: "G-X9Z4W7TPSR",
+  };
+  // Initialize Firebase
+  let database = firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  let today = new Date();
+  let todayString = today.toDateString();
+  let dbRef = database.database().ref(todayString);
+  let userRef = dbRef.push();
+  id = userRef.key;
+
   if (checkBox) {
     let randomTest = Math.round(Math.random());
     let randType;
@@ -414,6 +434,20 @@ document.addEventListener("DOMContentLoaded", function () {
         nextBtn.disabled = true;
       }
     };
+
+    let dbRef = database.database().ref();
+    dbRef.once('value', function(snapshot) { 
+      let snapCount = 0;
+      for(let child in snapshot.val()){
+        let obj = snapshot.val()[child]
+        snapCount = snapCount + Object.keys(obj).length
+      }
+      
+      if(snapCount >= 200){
+        document.getElementById('landing').innerHTML = "Data collection for this study has concluded"
+      }
+    });
+
   }
 
   if (nextBtn) {
@@ -440,7 +474,6 @@ document.addEventListener("DOMContentLoaded", function () {
     instructionsBtn.addEventListener("click", function (e) {
       e.preventDefault();
       instructionsCounter++;
-      console.log(instructionsCounter);
       switch (instructionsCounter) {
         case 0:
           secondStudy.classList.add("invisible");
@@ -467,6 +500,10 @@ document.addEventListener("DOMContentLoaded", function () {
           instructionsSix.classList.remove("invisible");
           break;
         case 6:
+          instructionsSix.classList.add("invisible");
+          instructionsSeven.classList.remove("invisible");
+          break;
+        case 7:
           window.location.href = "study.html";
           break;
         default:
@@ -474,25 +511,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
-  let firebaseConfig = {
-    apiKey: "AIzaSyCqRL94OHiQ8sBYGA_tdCtbMFwTuDODAnI",
-    authDomain: "shooter-cog.firebaseapp.com",
-    databaseURL: "https://shooter-cog-default-rtdb.firebaseio.com",
-    projectId: "shooter-cog",
-    storageBucket: "shooter-cog.appspot.com",
-    messagingSenderId: "311137323923",
-    appId: "1:311137323923:web:9e80f6ee30cc92e477b666",
-    measurementId: "G-X9Z4W7TPSR",
-  };
-  // Initialize Firebase
-  let database = firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-  let today = new Date();
-  let todayString = today.toDateString();
-  let dbRef = database.database().ref(todayString);
-  let userRef = dbRef.push();
-  id = userRef.key;
 
   function writeUserData() {
     userRef.set(trialResults).then(function () {
@@ -531,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (startPractice && e.key == " ") {
       startPractice = false;
-      instructionsSeven.classList.add("invisible");
+      instructionsEight.classList.add("invisible");
       studyDiv.classList.remove("invisible");
       start();
     }
@@ -677,7 +695,6 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         trialResults[trialResults.length - 1].currentAudio = currentAudio;
       }
-      console.log(trialResults[trialResults.length - 1]);
     }
 
     previousAudio = currentAudio;
