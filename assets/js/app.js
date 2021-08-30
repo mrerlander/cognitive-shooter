@@ -443,8 +443,11 @@ document.addEventListener("DOMContentLoaded", function () {
         snapCount = snapCount + Object.keys(obj).length
       }
       
-      if(snapCount >= 200){
-        document.getElementById('landing').innerHTML = "Data collection for this study has concluded"
+      if(snapCount >= 15){
+        let landing = document.getElementById('landing');
+        landing.classList.add("text-center");
+        landing.classList.add("font-weight-bold");
+        landing.innerHTML = "Data collection for this study has concluded";
       }
     });
 
