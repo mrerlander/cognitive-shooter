@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
         snapCount = snapCount + Object.keys(obj).length
       }
       
-      if(snapCount >= 15){
+      if(snapCount >= 200){
         let landing = document.getElementById('landing');
         landing.classList.add("text-center");
         landing.classList.add("font-weight-bold");
